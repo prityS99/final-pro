@@ -1,65 +1,152 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import Image, { StaticImageData } from "next/image";
+import { useRouter } from "next/navigation";
+import slide1 from "../../public/Banner/slide 1.jpg";
+import slide2 from "../../public/Banner/slide 2.jpg";
+import slide4 from "../../public/Banner/slide 4.jpg";
+import AboutUs from "@/components/AboutUs";
+import Creation from "@/components/Creation";
+import Companies from "@/components/Companies";
+import TryForFree from "@/components/TryforFree";
+import Review from "@/components/Review";
+
+
+interface Slide {
+  id: number;
+  image: StaticImageData;
+  title: string;
+  subtitle: string;
+  button: string;
+}
+
+const slides: Slide[] = [
+  {
+    id: 1,
+    image: slide1,
+    title: "Discover Variations",
+    subtitle: "Let each step carry you towards your dream projects.",
+    button: "Request A Demo",
+  },
+  {
+    id: 2,
+    image: slide2,
+    title: "Wander Freely",
+    subtitle: "The world waits quietly until you arrive.",
+    button: "Start your Journey",
+  },
+  {
+    id: 3,
+    image: slide4,
+    title: "Find Your Space",
+    subtitle: "Every steps you take, is important.",
+    button: "Get Started",
+  },
+];
+
+
+export default function Banner() {
+  const [current, setCurrent] = useState(0);
+  const [scrollOffset, setScrollOffset] = useState(0);
+const router = useRouter();
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+ 
+  useEffect(() => {
+    const handleScroll = () => setScrollOffset(window.scrollY * 0.3);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+
+      <section className="relative h-[90vh] w-full overflow-hidden">
+        
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 transition-opacity duration-[1500ms] ease-out ${current === index ? "opacity-100" : "opacity-0"
+              }`}
+            style={{
+              transform: `translateY(${scrollOffset}px)`,
+            }}
           >
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src={slide.image}
+              alt={slide.title}
+              fill
+              priority={index === 0}
+              style={{ objectFit: "cover" }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </div>
+        ))}
+
+       
+        <div className="absolute inset-0 bg-black/10" />
+
+        
+        <div className="relative z-20 h-full flex items-center justify-center px-6 font-sans">
+
+
+          <div
+            className={`
+                p-10 mx-auto w-full max-w-2xl text-center shadow-2xl transition-all duration-700
+                rounded-xl backdrop-blur-md bg-white/10 border border-white/20
+            `}
           >
-            Documentation
-          </a>
+            
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg transition-all duration-700">
+              {slides[current].title}
+            </h1>
+
+            <p className="mt-4 text-gray-100 text-lg md:text-xl max-w-2xl transition-all duration-700">
+              {slides[current].subtitle}
+            </p>
+
+ 
+            <button 
+  className="mt-8 px-8 py-3 font-bold border-2 border-white-850 text-white 
+  hover:bg-indigo-600 rounded-full shadow-xl hover:text-white transition-all duration-300 
+  text-sm"
+   onClick ={()=> router.push('/login')}>
+   
+  {slides[current].button}
+</button>
+
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* SLIDER DOTS */}
+        <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-3 z-30">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrent(index)}
+              className={`h-3 w-3 rounded-full transition-all ${current === index ? "bg-white" : "bg-white/40"
+                }`}
+            />
+          ))}
+        </div>
+      </section>
+
+      <AboutUs />
+      <Creation />
+      <Companies />
+      <TryForFree />
+      <Review />
+    </>
+
+
   );
+
 }
+
+
